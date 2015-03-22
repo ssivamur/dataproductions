@@ -16,75 +16,11 @@ Here we are looking at a app that pull stock prices by ticker symbol and display
 * Let you to select SIMPLE MOVING AVERAGE for the date selected.
 * Similarly any other can also be added to the selection.
 
-ui.R Code - high level review
-========================================================
-
-```{r, echo=TRUE}
-library(shiny)
-
-shinyUI(fluidPage(
-  titlePanel("Dynamic Stock Chart"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      helpText("Select a FIRST stock to examine. 
-        Information will be collected from yahoo finance."),
-    
-      textInput("symb", "Symbol", "SPY"),
-      
-      dateRangeInput("dates", 
-        "Date range",
-        start = "2013-01-01", 
-        end = as.character(Sys.Date())),
-   
-      actionButton("get", "Get Stock"),
-      
-      br(),
-      br(),
-      
-      helpText("Following features are enabled"),
-      
-      checkboxInput("vol", "Add Volume", value=FALSE),
-      checkboxInput("mva", "Simple Moving Average", value=FALSE)
-    ),
-    
-    mainPanel(plotOutput("plot"))
-  )
-))
-```
-
-server.R - High level code review
-========================================================
-
-# server.R
-
-library(quantmod)
-source("helpers.R")
-
-shinyServer(function(input, output) {
-
-  output$plot <- renderPlot({
-    data <- getSymbols(input$symb, src = "yahoo", 
-      from = input$dates[1],
-      to = input$dates[2],
-      auto.assign = FALSE)
-    
-    
-    #TAList <- "addVo();addBBands();addCCI();addSAR()"
-    
-
-    chartSeries(data, theme = chartTheme("white"), 
-      type = "line", TA = NULL)
-    
-    if(input$vol==TRUE){chartSeries(data, theme = chartTheme("white"), 
-                                    type = "line", TA = "addVo()")}
-    if(input$mva==TRUE){chartSeries(data, theme = chartTheme("white"), 
-                                    type = "line", TA = "addSMA()")} 
-
-  })
-
 
 Conclusion
 ========================================================
 
 The Stock Chart is dynamic and more parameters can be added without any much efforts. Its does support around 20 variables that are part of QUANTMOD package which will help in doing any kind of stock analysis.
+The code is available on the github at the below link
+https://github.com/ssivamur/dataproductions
+
